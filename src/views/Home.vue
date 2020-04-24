@@ -1,18 +1,87 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <van-nav-bar title="Home" fixed placeholder right-text="New Sentence"  @click-right="onClickRight" />
+    <van-tabs  sticky offset-top=46>
+      <van-tab title="Completed">
+        <van-list
+      v-model="loading"
+      :finished="finished"
+      finished-text="No more."
+      @load="onLoad"
+    >
+      <van-cell v-for="item in list" :key="item.id" :title="item.title" is-link @click="onClick(item.id)"  />
+        </van-list>
+      </van-tab>
+            <van-tab title="Unanswered">
+                <van-list
+      v-model="loading"
+      :finished="finished"
+      finished-text="No more."
+      @load="onLoad"
+    >
+      <van-cell v-for="item in list1" :key="item.id" :title="item.sentence_en" is-link @click="onClick(item.id)"  />
+        </van-list>
+      </van-tab>
+    </van-tabs>
+
   </div>
 </template>
-
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
+import request from '@/utils/request'
 export default {
-  name: 'Home',
-  components: {
-    HelloWorld
-  }
-}
+    name: "home",
+      data() {
+    return {
+            list: [],
+            list1: [],
+            loading: false,
+            finished: false,
+    };
+  },
+    methods: {
+      onLoad() {
+            this.loading = true;
+            request({
+            url: "/sentences?answered=true",
+            method: 'get'
+            }).then(response => {
+              if(response.code == 200){
+                console.log(response.data.list)
+                this.list = response.data.list
+              }
+             }).finally(() => {
+               this.loading = false;
+               this.finished = true;
+               })
+            this.loading = true;
+            request({
+            url: "/sentences?answered=false",
+            method: 'get'
+            }).then(response => {
+              if(response.code == 200){
+                console.log(response.data.list)
+                this.list1 = response.data.list
+              }
+             }).finally(() => {
+               this.loading = false;
+               this.finished = true;
+               })
+
+    },
+    onRefresh(index) {
+      this.list[index].finished = false;
+      this.onLoad(index);
+    },
+    onClickRight(){
+      this.$router.push("/newsentence")
+    },
+    onClick(id){
+      this.$router.push(`/showsentence/${id}`)
+    }
+  },
+};
 </script>
+
+<style>
+
+</style>
