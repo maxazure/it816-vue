@@ -17,7 +17,7 @@
     autosize
     type="textarea"
     rows="4"
-    maxlength="150"
+    maxlength="650"
     show-word-limit
     @blur="onSentenceEnBlur"
     :rules="[{ required: true, message: 'English Sentence required.' }]"
@@ -42,8 +42,8 @@
   <van-cell is-link @click="show = true" title="Catalog" :value="catalog_name"></van-cell>
 
 
-  <van-cell title="Audio upload"> <input type="file" name="audio_url" @change="tirggerFile($event)" accept="audio/*;capture=microphone"></van-cell>
- 
+  <van-cell title="Audio upload" > <input type="file" name="audio_url" @change="tirggerFile($event)" accept="audio/*;capture=microphone"></van-cell>
+ <van-cell :value="mp3_file_url"></van-cell>
 
   <div style="margin: 16px; text-align:center;">
     <van-button round type="info" native-type="submit">
@@ -73,6 +73,9 @@ export default {
     };
    },
    mounted(){
+     window.setInputText = this.setInputText
+      window.getToken = this.getToken
+      window.getUploadUrl = this.getUploadUrl
        request({
             url: "/catalogsapi",
             method: 'get'
@@ -87,6 +90,17 @@ export default {
 
    },
     methods: {
+      getToken(){
+          return localStorage.getItem('token');
+      },
+      getUploadUrl(){
+          return this.$router.url
+      },
+      setInputText(path){
+        this.mp3_file_url = path;
+        Toast(path);
+
+      },
       onConfirm(item){
         this.catalog_name = item.text
         this.catalog_id = item.value

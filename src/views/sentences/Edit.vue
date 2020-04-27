@@ -17,7 +17,7 @@
         autosize
         type="textarea"
         rows="4"
-        maxlength="150"
+        maxlength="650"
         show-word-limit
         :rules="[{ required: true, message: 'English Sentence required.' }]"
       />

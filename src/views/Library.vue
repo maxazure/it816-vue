@@ -7,7 +7,7 @@
       finished-text="No more catelog."
       @load="onLoad"
     >
-      <van-cell v-for="item in list" :key="item.id" :title="item.name_en" is-link @click="onClick(item.id)"  />
+      <van-cell v-for="item in list" :key="item.id" :title="item.name_en" :label="item.description" is-link @click="onClick(item.id)"  />
     </van-list>
   </div>
 </template>

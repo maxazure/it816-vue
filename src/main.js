@@ -10,6 +10,7 @@ Vue.use(Tabbar).use(TabbarItem).use(NavBar).use(List).use(Cell).use(Tabs).use(Ta
 Vue.use(vuePlayerAudio, { component: 'PlayerAudio' });
 // Vue.use(axios)
 
+Vue.prototype.$baseUrl = "http://123.207.179.135:5000"
 Vue.prototype.$http = axios
 //Vue.prototype.$router = router
 Vue.config.productionTip = false

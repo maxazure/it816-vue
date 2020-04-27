@@ -57,6 +57,7 @@ export default {
               if(response.code == 200){
                 console.log(response.data)
                 this.sententce = response.data
+                this.sententce.audio_url = this.$baseUrl + this.sententce.audio_url
                 this.title = response.data.title
               }
              }).finally(() => {

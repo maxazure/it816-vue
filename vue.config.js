@@ -1,4 +1,6 @@
 module.exports = {
+  publicPath:'./',
+  assetsDir: './',
     devServer: {
         proxy: {
             '/api': {
@@ -12,5 +14,6 @@ module.exports = {
               changeOrigin: true
             },
       }
-  }
+  },
+  
 }

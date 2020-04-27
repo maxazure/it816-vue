@@ -31,7 +31,7 @@ function ajaxAfter() {
 // create an axios instance
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  baseURL: '/api',
+  baseURL: 'http://123.207.179.135:5000/api',
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
