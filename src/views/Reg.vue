@@ -1,9 +1,8 @@
 <template>
   <div class="login">
     <div class="logo">
-      <img src="../assets/logo.png" alt="Shadowing Language Partner" />
+      Sentence
     </div>
-    <div class="title">Sign Up</div>
     <van-form @submit="onSubmit">
       <van-field
         v-model="email"
@@ -27,6 +26,7 @@
         placeholder="Name"
         :rules="[{ required: true, message: 'Name is required.' }]"
       />
+
       <van-popup v-model="show" position="bottom" :style="{ height: '40%' }">
         <van-picker
           show-toolbar
@@ -34,19 +34,41 @@
           cancel-button-text="Cancel"
           :columns="first_languages"
           @change="onSelect"
-          @cancel="show=false"
+          @cancel="show = false"
           @confirm="onConfirm"
         />
       </van-popup>
-      <van-cell is-link @click="show=true" title="first_language" :value="first_language"></van-cell>
-
-      <div style="margin: 16px;">
-        <van-button round block type="info" native-type="submit">Sign Up Now</van-button>
+      <van-cell
+        is-link
+        @click="show = true"
+        title="First Language"
+        :value="first_language"
+      ></van-cell>
+      <van-cell title="Gender  (for avatar)"> </van-cell>
+      <van-radio-group class="gender" v-model="gender">
+        <van-cell-group>
+          <van-cell title="female" clickable @click="gender = 'female'">
+            <van-radio name="female" />
+          </van-cell>
+          <van-cell title="male" clickable @click="gender = 'male'">
+            <van-radio name="male" />
+          </van-cell>
+        </van-cell-group>
+      </van-radio-group>
+      <div class="policy center">
+        By clicking Join now, you agree to Sentences' User Agreement, Privacy
+        Policy, and Cookie Policy
+      </div>
+      <div class="btn">
+        <van-button round block type="info" native-type="submit"
+          >Join Now</van-button
+        >
         <van-cell :title="info" size="large" />
       </div>
     </van-form>
-    <div style="margin: 16px;">
-      <van-button round block plain type="info" @click="$router.go(-1);">Back</van-button>
+
+    <div class="center" @click="$router.go(-1)">
+      Already have an account? Sign in
     </div>
   </div>
 </template>
@@ -62,8 +84,9 @@ export default {
       first_languages: ["Chinese", "English"],
       first_language: "",
       email: "",
+      gender: "female",
       password: "",
-      info: ""
+      info: "",
     };
   },
   methods: {
@@ -76,12 +99,13 @@ export default {
     },
     onSubmit(values) {
       console.log("submit", values);
+      values.gender = this.gender;
       values.first_language = this.first_language;
       request({
         url: "/users",
         method: "post",
-        data: values
-      }).then(response => {
+        data: values,
+      }).then((response) => {
         if (response.code == 200) {
           this.info = "Sign up successfully.";
           this.$router.push("/login");
@@ -89,8 +113,8 @@ export default {
           this.info = "User exsited.";
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -103,11 +127,24 @@ export default {
   background: #fff;
 }
 .title {
-  font: 2em sans-serif;
+  font: 1.5em sans-serif;
   text-align: center;
   margin-bottom: 30px;
 }
 .logo {
+  font: 2em sans-serif;
+  text-align: center;
+  margin-bottom: 30px;
+}
+.gender {
+  margin-left: 5em;
+}
+.policy {
+  color: darkgray;
+  font: 0.8em sans-serif;
+  margin: 1em;
+}
+.center {
   text-align: center;
 }
 </style>

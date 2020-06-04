@@ -1,10 +1,9 @@
+import axios from "axios";
+import { getToken, removeToken } from "@/utils/auth";
+import { numberToString } from "@/utils/index";
 
-import axios from 'axios'
-import { getToken, removeToken  } from '@/utils/auth'
-import { numberToString } from '@/utils/index'
-
-let loading = null
-let loadTotal = 0
+let loading = null;
+let loadTotal = 0;
 
 function ajaxBefore() {
   if (loading == null) {
@@ -15,15 +14,15 @@ function ajaxBefore() {
     //   background: 'rgba(0, 0, 0, 0)'
     // })
   }
-  loadTotal++
+  loadTotal++;
 }
 
 function ajaxAfter() {
   if (loading) {
-    loadTotal--
+    loadTotal--;
     if (loadTotal === 0) {
-    //   loading.close()
-      loading = null
+      //   loading.close()
+      loading = null;
     }
   }
 }
@@ -31,31 +30,32 @@ function ajaxAfter() {
 // create an axios instance
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  baseURL: 'http://123.207.179.135:5000/api',
+  baseURL: "https://s.nz100.vip/api",
+  // baseURL: "/api",
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
-})
+  timeout: 5000, // request timeout
+});
 
 // request interceptor
 service.interceptors.request.use(
-  config => {
+  (config) => {
     // do something before request is sent
-    console.log('request:' + config.url, config)
+    console.log("request:" + config.baseURL + config.url);
     if (localStorage.max_login) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
-      config.headers['Authorization'] = 'Bearer ' + getToken()
-      config.headers['Accept'] = 'application/json'
+      config.headers["Authorization"] = "Bearer " + getToken();
+      config.headers["Accept"] = "application/json";
     }
-    return config
+    return config;
   },
-  error => {
+  (error) => {
     // do something with request error
-    console.log('configErr', error) // for debug
-    return Promise.reject(error)
+    console.log("configErr", error); // for debug
+    return Promise.reject(error);
   }
-)
+);
 
 // response interceptor
 service.interceptors.response.use(
@@ -69,40 +69,43 @@ service.interceptors.response.use(
    * Here is just an example
    * You can also judge the status by HTTP Status Code
    */
-  response => {
-    ajaxAfter()
-    const res = response.data
-    console.log('response', res)
+  (response) => {
+    ajaxAfter();
+    const res = response.data;
+    console.log("response", res);
     // if the custom code is not 20000, it is judged as an error.
 
     if (res.code !== 200) {
-      console.log('response', res.message)
+      console.log("response", res.message);
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
       if (res.code === 401 || res.code === 5000) {
-        const map = new Map([[401, '没有授权'], [5000, '登录已过期']])
+        const map = new Map([
+          [401, "没有授权"],
+          [5000, "登录已过期"],
+        ]);
         // to re-login
-        removeToken()
+        removeToken();
       }
 
-      return res
+      return res;
     } else {
-      return res
+      return res;
     }
   },
-  error => {
-    ajaxAfter()
-    console.log('res' + error) // for debug
-    console.log('response', res.message)
-    return Promise.reject(error)
+  (error) => {
+    ajaxAfter();
+    console.log("res" + error); // for debug
+    console.log("response", res.message);
+    return Promise.reject(error);
   }
-)
+);
 
 async function http(params = {}) {
-  ajaxBefore()
-  const data = await service(params)
-  numberToString(data)
-  ajaxAfter()
-  return data
+  ajaxBefore();
+  const data = await service(params);
+  numberToString(data);
+  ajaxAfter();
+  return data;
 }
 
-export default http
+export default http;

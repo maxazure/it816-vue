@@ -1,7 +1,7 @@
 <template>
   <div class="sententces">
     <van-nav-bar
-      title="Editing Sentence"
+      title="Answering a question"
       fixed
       placeholder
       left-arrow
@@ -9,51 +9,30 @@
     />
     <van-form @submit="onSubmit">
       <van-field
-        v-model="sententce.title"
-        name="title"
-        label="Title"
-        placeholder="Title"
-        :rules="[{ required: true, message: 'Sentence title required' }]"
-      />
-      <van-field
         v-model="sententce.sentence_en"
         name="sentence_en"
-        label="English Sentence"
+        label="Question"
         placeholder="Sentence"
         autosize
         type="textarea"
         rows="4"
+        readonly
         maxlength="650"
         show-word-limit
         :rules="[{ required: true, message: 'English Sentence required.' }]"
       />
       <van-field
-        v-model="sententce.sentence_cn"
+        v-model="sentence_cn"
         name="sentence_cn"
-        label="Chinese Sentence"
+        label="Answer"
         placeholder="Sentence"
         autosize
+        rows="8"
         type="textarea"
-        maxlength="150"
+        maxlength="650"
         show-word-limit
+        :rules="[{ required: true, message: 'Answer required.' }]"
       />
-      <van-popup v-model="show" position="bottom" :style="{ height: '40%' }">
-        <van-picker
-          show-toolbar
-          confirm-button-text="OK"
-          cancel-button-text="Cancel"
-          :columns="catalogs"
-          @change="onSelect"
-          @cancel="show = false"
-          @confirm="onConfirm"
-        />
-      </van-popup>
-      <van-cell
-        is-link
-        @click="show = true"
-        title="Catalog"
-        v-model="catalog_name"
-      ></van-cell>
 
       <van-cell title="Audio upload">
         <input
@@ -63,6 +42,9 @@
           accept="audio/*;capture=microphone"
         />
       </van-cell>
+      <van-cell class="desc"
+        >Only allow to upload mp3 or using Recorder.</van-cell
+      >
 
       <div style="margin: 16px; text-align:center;">
         <van-button round type="info" native-type="submit">submit</van-button>
@@ -77,28 +59,14 @@ export default {
   name: "editententces",
   data() {
     return {
-      show: false,
-      catalog_name: "",
-      catalog_id: null,
-      catalogs: [],
       sententce: {
         sentence_en: "",
-        sentence_cn: "",
       },
+      sentence_cn: "",
       mp3_file_url: "",
     };
   },
   methods: {
-    onConfirm(item) {
-      this.catalog_name = item.text;
-      this.catalog_id = item.value;
-      this.show = false;
-    },
-    onSelect(picker, item, index) {
-      console.log(item.value);
-      this.catalog_name = item.text;
-      this.catalog_id = item.value;
-    },
     onClickLeft() {
       this.$router.go(-1);
     },
@@ -131,39 +99,15 @@ export default {
       if (this.mp3_file_url != "") {
         values.audio_url = this.mp3_file_url;
       }
-      if (this.sententce.sentence_cn == "") {
-        values.anwser_id = 0;
-        values.answered = false;
-      } else {
-        values.anwser_id = user.id;
-        values.answered = true;
-      }
-      values.catalog_id = this.catalog_id;
+      values.anwser_id = user.id;
+      values.answered = true;
+      console.log(this.values);
       request({
-        url: "/sentences/" + this.$route.params.id,
+        url: "/explore/" + this.$route.params.id,
         method: "put",
         data: values,
       }).then((response) => {
         this.$router.go(-1);
-      });
-    },
-    getCatalogs() {
-      request({
-        url: "/catalogsapi",
-        method: "get",
-      }).then((response) => {
-        if (response.code == 200) {
-          this.catalogs = response.data;
-          this.catalogs.forEach((item) => {
-            console.log("catalog: ", item.value, this.catalog_id);
-            if (item.value == this.catalog_id) {
-              this.catalog_name = item.text;
-              console.log("name:", this.catalog_name);
-            }
-          });
-        } else {
-          console.log(response);
-        }
       });
     },
   },
@@ -171,15 +115,13 @@ export default {
     console.log(this.$route.params.id);
     this.loading = true;
     request({
-      url: "/sentences/" + this.$route.params.id,
+      url: "/explore/" + this.$route.params.id,
       method: "get",
     })
       .then((response) => {
         if (response.code == 200) {
           console.log(response.data);
           this.sententce = response.data;
-          this.catalog_id = this.sententce.catalog_id;
-          this.getCatalogs();
         }
       })
       .finally(() => {
@@ -189,3 +131,9 @@ export default {
   },
 };
 </script>
+<style>
+.desc div {
+  color: #999;
+  text-align: center;
+}
+</style>

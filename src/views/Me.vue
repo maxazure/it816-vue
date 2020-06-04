@@ -16,11 +16,30 @@
         @click="$router.push('/updateinfo')"
       ></van-cell>
       <van-cell title="Email" icon="invition" :value="user.email"></van-cell>
-      <van-cell title="My Language" icon="location" :value="user.first_language"></van-cell>
-      <van-cell title="Intro" icon="comment" is-link @click="$router.push('/updateintro')"></van-cell>
+      <van-cell
+        title="My Language"
+        icon="location"
+        :value="user.first_language"
+      ></van-cell>
+      <van-cell
+        title="Intro"
+        icon="comment"
+        is-link
+        @click="$router.push('/updateintro')"
+      ></van-cell>
       <van-cell :value="user.intro"></van-cell>
-      <van-cell title="Change password" icon="setting" is-link @click="$router.push('/updatepwd')"></van-cell>
-      <van-cell title="Logout" icon="fire" is-link @click="onClickLogout"></van-cell>
+      <van-cell
+        title="Change password"
+        icon="setting"
+        is-link
+        @click="$router.push('/updatepwd')"
+      ></van-cell>
+      <van-cell
+        title="Logout"
+        icon="fire"
+        is-link
+        @click="onClickLogout"
+      ></van-cell>
     </div>
   </div>
 </template>
@@ -31,22 +50,22 @@ export default {
   name: "me",
   data() {
     return {
-      user: {}
+      user: {},
     };
   },
   methods: {
     onClickLogout() {
       removeToken();
       this.$router.push("/login");
-    }
+    },
   },
   mounted() {
     this.loading = true;
     request({
       url: "/auth/userinfo",
-      method: "get"
+      method: "get",
     })
-      .then(response => {
+      .then((response) => {
         if (response.code == 200) {
           console.log(response.data);
           this.user = response.data;
@@ -56,7 +75,7 @@ export default {
         this.loading = false;
         this.finished = true;
       });
-  }
+  },
 };
 </script>
 
@@ -87,5 +106,19 @@ export default {
 .avatar-wrapper .user-info span {
   font-size: 16px;
   color: #ffffff;
+}
+.van-nav-bar {
+  background-color: #fff;
+}
+.van-nav-bar__title {
+  color: #555;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+.van-nav-bar__text {
+  color: #1989fa;
+}
+.van-nav-bar .van-icon {
+  color: #1989fa;
 }
 </style>

@@ -1,27 +1,40 @@
 <template>
-  <div class="library">
-    <van-nav-bar
-      title="Catalog"
-      fixed
-      placeholder
-      right-text="New catalog"
-      @click-right="onClickRight"
-    />
+  <div class="explore">
+    <van-nav-bar title="Explore" fixed placeholder />
     <van-list
       v-model="loading"
       :finished="finished"
-      finished-text="No more catelog."
+      finished-text="No more qustions."
       @load="onLoad"
     >
       <van-cell
         v-for="item in list"
-        icon="description"
         :key="item.id"
-        :title="item.name_en"
-        :label="item.description"
-        is-link
         @click="onClick(item.id)"
-      />
+        :label="' [' + item.user_name + '] asks for pronunciation'"
+        :title="item.sentence_en"
+      >
+        <template #icon>
+          <van-image
+            round
+            width="5rem"
+            height="5rem"
+            style="margin-right: 12px"
+            :src="item.avatar"
+          />
+        </template>
+      </van-cell>
+
+      <!-- <div v-for="item in list" :key="item.id" @click="onClick(item.id)">
+        <div>
+          <van-image
+            round
+            width="5rem"
+            height="5rem"
+            src="https://img.yzcdn.cn/vant/cat.jpeg"
+          />{{ item.name_en }}循环出来的数据
+        </div>
+      </div> -->
     </van-list>
   </div>
 </template>
@@ -29,7 +42,7 @@
 import router from "../router";
 import request from "@/utils/request";
 export default {
-  name: "library",
+  name: "explore",
   data() {
     return {
       list: [],
@@ -39,21 +52,19 @@ export default {
   },
   methods: {
     onClick(id) {
-      this.$router.push(`/catalogs/list/${id}`);
+      this.$router.push(`/answer/${id}`);
     },
-    onClickRight() {
-      this.$router.push("/catalogs/new");
-    },
+
     onLoad() {
       this.loading = true;
       request({
-        url: "/catalogs",
+        url: "/explore",
         method: "get",
       })
         .then((response) => {
           if (response.code == 200) {
-            console.log(response.data.list);
-            this.list = response.data.list;
+            console.log(response.data);
+            this.list = response.data;
           }
         })
         .finally(() => {
